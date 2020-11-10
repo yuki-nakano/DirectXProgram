@@ -1,4 +1,4 @@
-#include "DirectGraphics.h"
+ï»¿#include "DirectGraphics.h"
 
 LPDIRECT3D9 g_Interface = nullptr;
 LPDIRECT3DDEVICE9 g_Device = nullptr;
@@ -12,17 +12,17 @@ bool InitDirectGraphics(HWND window_handle)
 		return false;
 	}
 
-	//Device‚Ìî•ñ‚ðÝ’è‚·‚é
+	//Deviceã®æƒ…å ±ã‚’è¨­å®šã™ã‚‹
 	D3DPRESENT_PARAMETERS parameters;
 
-	//Žw’è‚³‚ê‚½ƒf[ƒ^‚ðƒTƒCƒY•ª‚¾‚¯0‚Å‰Šú‰»‚·‚é
+	//æŒ‡å®šã•ã‚ŒãŸãƒ‡ãƒ¼ã‚¿ã‚’ã‚µã‚¤ã‚ºåˆ†ã ã‘0ã§åˆæœŸåŒ–ã™ã‚‹
 	ZeroMemory(&parameters, sizeof(D3DPRESENT_PARAMETERS));
 
-	//ƒoƒbƒNƒoƒbƒtƒ@[‚Ì”
+	//ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ãƒ¼ã®æ•°
 	parameters.BackBufferCount = 1;
-	// ƒoƒbƒNƒoƒbƒtƒ@‚ÌƒtƒH[ƒ}ƒbƒg
+	// ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã®ãƒ•ã‚©ãƒ¼ãƒžãƒƒãƒˆ
 	parameters.BackBufferFormat = D3DFMT_UNKNOWN;
-	//ƒEƒBƒ“ƒhƒEƒ‚[ƒh‚ÌŽw’è
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ¢ãƒ¼ãƒ‰ã®æŒ‡å®š
 	parameters.Windowed = true;
 
 	parameters.SwapEffect = D3DSWAPEFFECT_DISCARD;
@@ -48,17 +48,103 @@ void ReleseDirectGraphics()
 {
 	if (g_Device != nullptr)
 	{
-		//Release Ë@ŠJ•úŠÖ”
+		//Release â‡’ã€€é–‹æ”¾é–¢æ•°
 		g_Device->Release();
-		//‰ð•úŒã‚Ì•s³ƒAƒNƒZƒX‘Î‰ž
+		//è§£æ”¾å¾Œã®ä¸æ­£ã‚¢ã‚¯ã‚»ã‚¹å¯¾å¿œ
 		g_Device = nullptr;
 	}
 
 	if (g_Interface != nullptr)
 	{
-		//Release Ë@ŠJ•úŠÖ”
+		//Release â‡’ã€€é–‹æ”¾é–¢æ•°
 		g_Interface->Release();
-		//‰ð•úŒã‚Ì•s³ƒAƒNƒZƒX‘Î‰ž
+		//è§£æ”¾å¾Œã®ä¸æ­£ã‚¢ã‚¯ã‚»ã‚¹å¯¾å¿œ
 		g_Interface = nullptr;
+	}
+}
+
+void StartDrowing()
+{
+	//ãƒãƒƒã‚¯ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢
+	g_Device->Clear(
+		0,
+		nullptr,
+		D3DCLEAR_TARGET,
+		D3DCOLOR_XRGB(255, 255, 255),
+		1.0f,
+		0
+	);
+
+	//DirectXã§æç”»é–‹å§‹
+	g_Device->BeginScene();
+}
+
+void FinishDrowing()
+{
+	//DirectXã®æç”»çµ‚äº†
+	g_Device->EndScene();
+
+	g_Device->Present(nullptr, nullptr, nullptr, nullptr);
+}
+
+void DrawTriangle()
+{
+	CustomVertex vertices[] =
+	{
+		{320.0f, 0.0f, 0.0f, 1.0f, 0x000000 },
+		{640.0f, 480.0f, 0.0f, 1.0f, 0x000000 },
+		{0.0f, 480.0f, 0.0f, 1.0f, 0x000000 },
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLELIST,
+		1,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+void DrawRect(float posX, float posY, float sizeX, float sizeY, colorPattern colorpattern)
+{
+	DWORD Color = colorCheck(colorpattern);
+	CustomVertex vertices[] =
+	{
+		{posX, posY, 0.0f, 1.0f, Color},
+		{posX + sizeX, posY, 0.0f, 1.0f, Color},
+		{posX, posY + sizeY, 0.0f, 1.0f, Color},
+		{posX + sizeX, posY + sizeY, 0.0f, 1.0f, Color}
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLESTRIP,
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
+DWORD colorCheck(colorPattern colorpattern)
+{
+	switch (colorpattern)
+	{
+	case black:
+		return 0x000000;
+		break;
+	case white:
+		return 0xffffff;
+		break;
+	case red:
+		return 0xff0000;
+		break;
+	case green:
+		return 0x00ff00;
+		break;
+	case blue:
+		return 0x0000ff;
+		break;
 	}
 }

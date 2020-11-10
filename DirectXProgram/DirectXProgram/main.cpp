@@ -1,7 +1,7 @@
-#include <Windows.h>
+ï»¿#include <Windows.h>
 #include "DirectGraphics.h"
 
-//ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ
+//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£
 LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wparam, LPARAM lparam)
 {
 	switch (message_id)
@@ -17,14 +17,14 @@ LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wpa
 	return 0;
 }
 
-//ƒGƒ“ƒgƒŠƒ|ƒCƒ“ƒg
+//ã‚¨ãƒ³ãƒˆãƒªãƒã‚¤ãƒ³ãƒˆ
 int APIENTRY WinMain(
 	HINSTANCE	hInstance,
 	HINSTANCE	hPrevInstance,
 	LPSTR		LpCmpLine,
 	INT			nCmdShow)
 {
-	//ƒEƒBƒ“ƒhƒEî•ñ‚Ì‰Šú‰»
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã®åˆæœŸåŒ–
 	WNDCLASS window_class =
 	{
 		CS_HREDRAW | CS_VREDRAW,
@@ -42,13 +42,13 @@ int APIENTRY WinMain(
 	int width = 640;
 	int height = 480;
 
-	//ƒEƒBƒ“ƒhƒEî•ñ‚Ì“o˜^
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦æƒ…å ±ã®ç™»éŒ²
 	if (RegisterClass(&window_class) == 0)
 	{
 		return 0;
 	}
 
-	//ƒEƒBƒ“ƒhƒEì¬
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ä½œæˆ
 	HWND window_handle = CreateWindowA(
 		"WindowClass",
 		"test",
@@ -76,15 +76,15 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
-	//ƒtƒŒ[ƒ€‚ÌƒTƒCƒYZo
+	//ãƒ•ãƒ¬ãƒ¼ãƒ ã®ã‚µã‚¤ã‚ºç®—å‡º
 	int frame_size_x = (window_rect.right - window_rect.left) - (client_rect.right - client_rect.left);
 	int frame_size_y = (window_rect.bottom - window_rect.top) - (client_rect.bottom - client_rect.top);
 
-	//ƒŠƒTƒCƒY—pƒTƒCƒY‚ÌZo
+	//ãƒªã‚µã‚¤ã‚ºç”¨ã‚µã‚¤ã‚ºã®ç®—å‡º
 	int resize_width = frame_size_x + width;
 	int resize_height = frame_size_y + height;
 
-	//ƒEƒBƒ“ƒhƒE‚ÌƒŠƒTƒCƒY
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ãƒªã‚µã‚¤ã‚º
 	SetWindowPos(
 		window_handle,
 		nullptr,
@@ -95,7 +95,7 @@ int APIENTRY WinMain(
 		SWP_NOMOVE
 	);
 
-	//ƒEƒBƒ“ƒhƒE‚Ì•\¦
+	//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®è¡¨ç¤º
 	ShowWindow(window_handle, SW_SHOW);
 
 	if (InitDirectGraphics(window_handle) == false)
@@ -103,12 +103,12 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
-	//ƒƒCƒ“ƒ‹[ƒv
+	//ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—
 	while (true)
 	{
 		MSG message;
 
-		//Windows‚©‚ç‚ÌƒƒbƒZ[ƒW‚Ì‘Î‰
+		//Windowsã‹ã‚‰ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®å¯¾å¿œ
 		if (PeekMessage(&message, nullptr, 0, 0, PM_REMOVE))
 		{
 			if (message.message == WM_QUIT)
@@ -117,20 +117,26 @@ int APIENTRY WinMain(
 			}
 			else
 			{
-				//óM‚µ‚½ƒf[ƒ^‚Ì–|–ó
+				//å—ä¿¡ã—ãŸãƒ‡ãƒ¼ã‚¿ã®ç¿»è¨³
 				TranslateMessage(&message);
 
-				//ƒEƒBƒ“ƒhƒEƒvƒƒV[ƒWƒƒ‚É‘—M
+				//ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒ—ãƒ­ã‚·ãƒ¼ã‚¸ãƒ£ã«é€ä¿¡
 				DispatchMessage(&message);
 			}
 		}
 		else
 		{
+			StartDrowing();
 
+			DrawTriangle();
+
+			DrawRect(100.0f, 150.0f, 200.0f, 150.0f, blue);
+
+			FinishDrowing();
 		}
 	}
 
-	//‰ğ•ú
+	//è§£æ”¾
 	ReleseDirectGraphics();
 
 	return 0;
