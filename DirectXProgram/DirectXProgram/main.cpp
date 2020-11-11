@@ -103,6 +103,11 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
+	if (LoadTexture(TextureID::TexIDusa) == false)
+	{
+		return 0;
+	}
+
 	//メインループ
 	while (true)
 	{
@@ -130,13 +135,16 @@ int APIENTRY WinMain(
 
 			DrawTriangle();
 
-			DrawRect(100.0f, 150.0f, 200.0f, 150.0f, blue);
+			//DrawRect(100.0f, 150.0f, 200.0f, 150.0f, blue);
+
+			DrawRectTexture(TextureID::TexIDusa);
 
 			FinishDrowing();
 		}
 	}
 
 	//解放
+	ReleaseTexture();
 	ReleseDirectGraphics();
 
 	return 0;

@@ -11,6 +11,9 @@ struct CustomVertex
 	float Z;
 	float Rhw;
 	DWORD Color;
+
+	float Tu;
+	float Tv;
 };
 
 enum colorPattern
@@ -20,6 +23,12 @@ enum colorPattern
 	red,
 	green,
 	blue
+};
+
+enum TextureID
+{
+	TexIDusa,
+	TexIDMAX
 };
 
 bool InitDirectGraphics(HWND window_handle);
@@ -35,5 +44,9 @@ void DrawTriangle();
 void DrawRect(float posX, float posY, float sizeX, float sizeY, colorPattern colorpattern);
 DWORD colorCheck(colorPattern colorpattern);
 
+void DrawRectTexture(TextureID tex_id);
+
+bool LoadTexture(TextureID texid);
+void ReleaseTexture();
 
 #endif DIRECT_GRAPHICS_H

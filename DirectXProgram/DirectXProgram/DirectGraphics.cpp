@@ -3,6 +3,12 @@
 LPDIRECT3D9 g_Interface = nullptr;
 LPDIRECT3DDEVICE9 g_Device = nullptr;
 
+LPDIRECT3DTEXTURE9 g_Textures[TextureID::TexIDMAX];
+LPCWSTR g_TextureNameList[] =
+{
+	TEXT("res/9549.jpg")
+};
+
 bool InitDirectGraphics(HWND window_handle)
 {
 	g_Interface = Direct3DCreate9(D3D_SDK_VERSION);
@@ -127,6 +133,32 @@ void DrawRect(float posX, float posY, float sizeX, float sizeY, colorPattern col
 	);
 }
 
+void DrawRectTexture(TextureID tex_id)
+{
+	if (g_Textures[tex_id] == nullptr)
+	{
+		return;
+	}
+
+	CustomVertex vertices[] = {
+		{0.0f, 0.0f, 0.0f, 1.0f, 0xffffff, 0.0f, 0.0f},
+		{100.0f, 0.0f, 0.0f, 1.0f, 0xffffff, 1.0f, 0.0f},
+		{100.0f, 100.0f, 0.0f, 1.0f, 0xffffff, 1.0f, 1.0f},
+		{0.0f, 100.0f, 0.0f, 1.0f, 0xffffff, 0.0f, 1.0f},
+	};
+
+	g_Device->SetFVF(D3DFVF_XYZRHW | D3DFVF_DIFFUSE | D3DFVF_TEX1);
+
+	g_Device->SetTexture(0, g_Textures[tex_id]);
+
+	g_Device->DrawPrimitiveUP(
+		D3DPT_TRIANGLEFAN,
+		2,
+		vertices,
+		sizeof(CustomVertex)
+	);
+}
+
 DWORD colorCheck(colorPattern colorpattern)
 {
 	switch (colorpattern)
@@ -146,5 +178,33 @@ DWORD colorCheck(colorPattern colorpattern)
 	case blue:
 		return 0x0000ff;
 		break;
+	}
+}
+
+bool LoadTexture(TextureID tex_id)
+{
+	HRESULT hr = D3DXCreateTextureFromFile(
+		g_Device,
+		g_TextureNameList[tex_id],
+		&g_Textures[tex_id]
+	);
+
+	if (FAILED(hr))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ReleaseTexture()
+{
+	for (int i = 0; i < TextureID::TexIDMAX; i++)
+	{
+		if (g_Textures[i] != nullptr)
+		{
+			g_Textures[i]->Release();
+			g_Textures[i] = nullptr;
+		}
 	}
 }
