@@ -1,5 +1,17 @@
 ﻿#include <Windows.h>
 #include "DirectGraphics.h"
+#include "DirectInput.h"
+
+#pragma comment(lib,"d3d9.lib")
+#pragma comment(lib,"d3dx9.lib")
+#pragma comment (lib,"dinput8.lib")
+#pragma comment (lib,"dxguid.lib")
+
+static float pos[3] = { 0.0f, 0.0f, 0.0f };
+static float rad[3] = { 0.0f, 0.0f, 0.0f };
+static float scale[3] = { 1.0f, 1.0f, 1.0f };
+
+
 
 //ウィンドウプロシージャ
 LRESULT CALLBACK WindowProcedure(HWND window_handle, UINT message_id, WPARAM wparam, LPARAM lparam)
@@ -108,6 +120,16 @@ int APIENTRY WinMain(
 		return 0;
 	}
 
+	if (InitDirectInput() == false)
+	{
+		return 0;
+	}
+
+	for (int i = 0; i < XFileDateMax; i++)
+	{
+		LoadXFile(i);
+	}
+	
 	//メインループ
 	while (true)
 	{
@@ -131,21 +153,40 @@ int APIENTRY WinMain(
 		}
 		else
 		{
-			StartDrowing();
+			//キーの状態を更新
+			UpdateDirectInput();
 
-			DrawTriangle();
+			Move(&rad[Y], &pos[X], &pos[Z]);
+
+			//カメラの設定
+			SetUpView();
+
+			UpdateCamera(pos[X], pos[Z], rad[Y]);
+
+			SetUpProjection();
+
+			StartDrawing();
+
+			//DrawTriangle();
 
 			//DrawRect(100.0f, 150.0f, 200.0f, 150.0f, blue);
 
-			DrawRectTexture(TextureID::TexIDusa);
+			//DrawRectTexture(TextureID::TexIDusa);
 
-			FinishDrowing();
+			DrawXFile(rad, pos, scale, box);
+
+			FinishDrawing();
 		}
 	}
 
 	//解放
 	ReleaseTexture();
+	ReleasDirectInput();
 	ReleseDirectGraphics();
+	for (int i = 0; i < XFileDateMax; i++)
+	{
+		ReleaseXFile(i);
+	}
 
 	return 0;
 }
